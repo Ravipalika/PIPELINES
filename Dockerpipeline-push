@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    stages {
+        stage("get the code") {
+            steps {
+                git branch: 'main', credentialsId: 'git', url: 'https://github.com/Ravipalika/dockerdummy.git'
+            }
+        }
+        stage("build image") {
+            steps {
+                sh 'docker build -t ravisrinivas2025/tulasi:basic .'
+            }
+        }
+        stage("push to docker hub") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'dockerhub') {
+                        sh 'docker push ravisrinivas2025/tulasi:basic'
+                    }
+                }
+            }
+        }
+        stage("deploy in container") {
+            steps {
+                sh 'docker run -itd --name cont12 -p 8091:80 ravisrinivas2025/tulasi:basic'
+            }
+        }
+    }
+}
