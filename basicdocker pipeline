@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+    stages {
+        stage("get the code") {
+            steps {
+                git branch: 'main', credentialsId: 'git', url: 'https://github.com/Ravipalika/dockerdummy.git'
+            }
+        }
+        stage("build image") {
+            steps {
+                sh 'docker build -t imagefromjen .'
+            }
+        }
+        stage("deploy in container") {
+            steps {
+                sh 'docker run -itd --name cont1 -p 8090:80 imagefromjen'
+            }
+        }
+    }
+}
